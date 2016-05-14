@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Web Audio Visualizer</title>
+	<link rel="stylesheet" type="text/css" href="css/automataVisualizerStyle.css" />
+	<script src="scripts/three/three.min.js"></script>
+	<script src="scripts/automataVisualizer.min.js"></script>
+	<script src="scripts/OrbitControls.js"></script>
+	<script src="scripts/three/shaders/CopyShader.js"></script>
+
+	<script src="scripts/three/postprocessing/EffectComposer.js"></script>   
+	<script src="scripts/three/postprocessing/RenderPass.js"></script>
+	<script src="scripts/three/postprocessing/MaskPass.js"></script>
+	<script src="scripts/three/postprocessing/ShaderPass.js"></script>
+
+</head>
+<body>
+	<div id="wrapper">
+		<header>Cellular Automata Audio Visualizer</header>
+		<canvas id="canvas" width="640" height="640"></canvas>
+		<canvas id="canvas3D" Width="640" height="640"></canvas>
+		<section id="tools">
+			<h1 class="centered" >Tools</h1>
+			<div class="centered">
+				<button id="changeColorButton">Change Color</button>
+				<button id="changePosButton">Swap Position</button>
+				<button id="getColorButton">Color Dropper</button>
+			</div>
+			<article>
+				<p id="toolInfo">Click on a button for info</p>
+			</article>
+
+			<h1 class="centered">Highlighted Cell's Data</h1>
+			<article>
+				<article id="cellData" class="left">
+					<p>R: N/A</p>
+					<p>G: N/A</p>
+					<p>B: N/A</p>
+					<p>Energized: N/A</p>
+				</article>
+				<article class="right">
+					<div id="cellColor"></div>
+				</article>
+				<p id="bottom"></p>
+			</article>
+
+			<h1 class="centered" >Color Selector</h1>
+			<article>
+				<article class="left">
+					<label for="rSlider">Red Value:</label>
+					<input id="rSlider" type="range" min="0" max="255" step="1" value="255"/>
+					<span id="rValue">0</span> <br>
+					<label for="gSlider">Green Value:</label>
+					<input id="gSlider" type="range" min="0" max="255" step="1" value="0"/>
+					<span id="gValue">0</span> <br>
+					<label for="bSlider">Blue Value:</label>
+					<input id="bSlider" type="range" min="0" max="255" step="1" value="0"/>
+					<span id="bValue">0</span>
+				</article>
+				<article class="right">
+					<div id="newColor"><div>
+				</article>
+				<p id="bottom"></p>
+			</article>
+
+			<h1 class="centered" >Energized Tint Color</h1>
+			<article>
+				<article class="left">
+					<label for="rTintSlider">Red Value:</label>
+					<input id="rTintSlider" type="range" min="0" max="255" step="1" value="0"/>
+					<span id="rTintValue">0</span> <br>
+					<label for="gTintSlider">Green Value:</label>
+					<input id="gTintSlider" type="range" min="0" max="255" step="1" value="255"/>
+					<span id="gTintValue">0</span> <br>
+					<label for="bTintSlider">Blue Value:</label>
+					<input id="bTintSlider" type="range" min="0" max="255" step="1" value="255"/>
+					<span id="bTintValue">0</span>
+				</article>
+				<article class="right">
+					<div id="newTintColor"></div>
+					<label for="aTintSlider">Alpha Value:</label>
+					<input id="aTintSlider" type="range" min="0" max=".25" step=".01" value=".05"/>
+					<span id="aTintValue">0</span>
+					<label for="thresholdSlider">Threshold Value:</label>
+					<input id="thresholdSlider" type="range" min="50" max="200" step="1" value="60"/>
+					<span id="thresholdValue">0</span>
+				</article>
+				<p id="bottom"></p>
+			</article>
+
+		</section>
+
+
+		<section id='audio'>
+			<audio controls loop></audio>
+			<label>Track: 
+				<select id="trackSelect">
+					<option value="media/Koharu Biyori.mp3">Koharu Biyori</option>
+					<option value="media/Hirari Hirari Orchestral.mp3">Hirari Hirari Orchestral</option>
+					<option value="media/Just a Dream.mp3">Just a Dream</option>
+					<option value="media/Ghostly Orchestra PG-Mix.mp3">Ghostly Orchestra PG-Mix</option>
+					<option value="media/Blossom.mp3">Blossom</option>
+					<option value="media/Full Force.mp3">Full Force</option>
+				</select>
+			</label>
+		<div class="rightFloat">
+			<label for="view3DCheck">View 3D:</label>
+			<input id="view3DCheck" type="checkbox"/ >
+			<p>Tools do not work in 3D Mode</p>
+		</div>
+		<p id="status">???</p>
+		</section>
+		<p id="bottom"></p>
+	</div>
+</body>
+</html>
