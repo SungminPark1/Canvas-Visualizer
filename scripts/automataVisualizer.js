@@ -3,7 +3,7 @@
 	"use strict";
 
 	// cell data
-	var cell = {
+	let cell = {
 		isAlive: false,
 		tempR: 0,
 		tempG: 0,
@@ -21,7 +21,7 @@
 	};
 
 	// grid data
-	var grid = {
+	let grid = {
 		size: 0,
 		cells: undefined,
 		geometries:[],
@@ -38,19 +38,19 @@
 			// set up 3d view
 			this.setup();
 
-			var sampleNumber = 0;
+			let sampleNumber = 0;
 
-			for(var x = 0; x<size; x++){
+			for(let x = 0; x<size; x++){
 				this.cells.push([]);
-				for(var y = 0; y<size; y++){
+				for(let y = 0; y<size; y++){
 					this.cells[x].push(Object.create(cell));
 					//if(x > 0)this.createBox(x, y);
 					this.createBox(x, y);
 					// set color spawn locations
 					if((x%3 == 2) && (y%6 == 3)){
-						this.cells[x][y].r = getRandomInt(100,255);
-						this.cells[x][y].g = getRandomInt(100,255);
-						this.cells[x][y].b = getRandomInt(100,255);
+						this.cells[x][y].r = getRandomInt(50,255);
+						this.cells[x][y].g = getRandomInt(50,255);
+						this.cells[x][y].b = getRandomInt(50,255);
 						this.cells[x][y].isSpawner = true;
 						this.cells[x][y].isAlive = true;
 						this.cells[x][y].sampleNum = sampleNumber;
@@ -80,7 +80,6 @@
 			
 			//brakes tracklist......
 			this.mouseControls = new THREE.OrbitControls(grid.camera , this.renderer.domElement, this.renderer.domElement);
-			console.log(this.mouseControls);
 			grid.mouseControls.addEventListener('change', function(){
 				grid.composer.render();
 			});
@@ -90,22 +89,22 @@
 		createLights: function(){
 			if( this.lights.length > 1 ) return;
 
-			var ambientLight = new THREE.AmbientLight(0xFFFFFF);
+			let ambientLight = new THREE.AmbientLight(0xFFFFFF);
 
-			var pointLight = new THREE.PointLight( 0xFFFFFF );
+			let pointLight = new THREE.PointLight( 0xFFFFFF );
 			pointLight.position.x = 100;
 			pointLight.position.y = 100;
 			pointLight.position.z = -130;
 
-			var pointLight2 = new THREE.PointLight( 0x666666 );
+			let pointLight2 = new THREE.PointLight( 0x333333 );
 			pointLight2.position.x = 0;
 			pointLight2.position.y = 0;
-			pointLight2.position.z = 260;
+			pointLight2.position.z = 300;
 
 			this.lights.push( ambientLight, pointLight, pointLight2 );
 
 			this.scene.add( ambientLight );
-			this.scene.add( pointLight );
+			//this.scene.add( pointLight );
 			this.scene.add( pointLight2 );
 		},
 		setupEffectsComposer: function(){
@@ -121,27 +120,27 @@
 			return this.composer
 		},
 		shader: function() {
-			var shader = new THREE.ShaderPass( THREE.CopyShader );
+			let shader = new THREE.ShaderPass( THREE.CopyShader );
 			shader.renderToScreen = true;
 
 			this.shaders.push( shader );
 			this.composer.addPass( shader );
 		},
 		createBox: function(x, y){
-			var box = new THREE.BoxGeometry( 1,1,1 ); // x,y,z scale
+			let box = new THREE.BoxGeometry( 1,1,1 ); // x,y,z scale
 
-			var mat = new THREE.MeshPhongMaterial( { color: 0xFFFFFF, shading: THREE.FlatShading, shininess: 50 } );
+			let mat = new THREE.MeshPhongMaterial( { color: 0xFFFFFF, shading: THREE.FlatShading, shininess: 50 } );
 			//let mat = new THREE.MeshBasicMaterial({ color:color })
 			mat.transparent = true;
-			var cube = new THREE.Mesh( box, mat );
+			let cube = new THREE.Mesh( box, mat );
 			cube.position.x = (x*1.5) - 36.5;
-			cube.position.y = (y*1.5) - 36.5;
+			cube.position.y = (y*-1.5) + 36.5;
 			this.geometries.push( cube );
 			this.scene.add( cube );
 		},
 		draw: function(mouse, selectedCell, tintColor){
-			for(var x = 0; x<this.size; x++){
-				for(var y = 0; y<this.size; y++){
+			for(let x = 0; x<this.size; x++){
+				for(let y = 0; y<this.size; y++){
 					ctx.fillStyle = makeColor(this.cells[x][y].r, this.cells[x][y].g, this.cells[x][y].b, this.cells[x][y].a);
 					ctx.strokeStyle = '#C0C0C0';
 					if(this.cells[x][y].isSpawner === true && this.cells[x][y].isAlive === false){
@@ -169,8 +168,8 @@
 			}
 
 			//highlight the cell that the mouse is on
-			var cellX = Math.floor(mouse.x/12.8);
-			var cellY = Math.floor(mouse.y/12.8);
+			let cellX = Math.floor(mouse.x/12.8);
+			let cellY = Math.floor(mouse.y/12.8);
 
 			// highlight the selected cell
 			if(selectedCell.x != -1){
@@ -185,12 +184,12 @@
 			}
 		},
 		updateSpawners: function(data){
-			for(var x = 0; x<this.size; x++){
-				for(var y = 0; y<this.size; y++){
+			for(let x = 0; x<this.size; x++){
+				for(let y = 0; y<this.size; y++){
 					if(this.cells[x][y].isSpawner === true){
-						var num = this.cells[x][y].sampleNum;
-						if(data[num] == 0){
-							this.cells[x][y].isAlive = false;
+						let num = this.cells[x][y].sampleNum;
+						if(data[num] < 5){
+							this.cells[x][y].a = 5/255;
 						}
 						else{
 							this.cells[x][y].isAlive = true;
@@ -207,8 +206,8 @@
 			}
 		},
 		checkNeighbours: function(){
-			for(var x = 0; x<this.size; x++){
-				for(var y = 0; y<this.size; y++){
+			for(let x = 0; x<this.size; x++){
+				for(let y = 0; y<this.size; y++){
 					// check neighbours of non-spawner cells
 					if(this.cells[x][y].isSpawner === false){
 						// top left corner
@@ -573,8 +572,8 @@
 			}
 		},
 		updateCells: function(){
-			for(var x = 0; x<this.size; x++){
-				for(var y = 0; y<this.size; y++){
+			for(let x = 0; x<this.size; x++){
+				for(let y = 0; y<this.size; y++){
 					// only update non-spawner cells
 					if(this.cells[x][y].isSpawner === false){
 						// update the color and alpha of cell
@@ -587,12 +586,23 @@
 							this.cells[x][y].tempG /= this.cells[x][y].neighbours;
 							this.cells[x][y].tempB /= this.cells[x][y].neighbours;
 							this.cells[x][y].tempA /= (this.cells[x][y].neighbours*2);
+ 
+							this.cells[x][y].r = Math.round(this.cells[x][y].tempR + (this.cells[x][y].tempR/125));
+							this.cells[x][y].g = Math.round(this.cells[x][y].tempG + (this.cells[x][y].tempG/125));
+							this.cells[x][y].b = Math.round(this.cells[x][y].tempB + (this.cells[x][y].tempB/125));
 
-							this.cells[x][y].r = Math.round(this.cells[x][y].tempR);
-							this.cells[x][y].g = Math.round(this.cells[x][y].tempG);
-							this.cells[x][y].b = Math.round(this.cells[x][y].tempB);
 							this.cells[x][y].a += this.cells[x][y].tempA;
 							
+							// prevent values from going over rgb limit
+							if(this.cells[x][y].r > 255){
+								this.cells[x][y].r = 255;
+							}
+							if(this.cells[x][y].g > 255){
+								this.cells[x][y].g = 255;
+							}
+							if(this.cells[x][y].b > 255){
+								this.cells[x][y].b = 255;
+							}
 							if(this.cells[x][y].a > 1){
 								this.cells[x][y].a = 1;
 							}
@@ -650,17 +660,24 @@
 
 		},
 		updateGeometries: function(){
-			var count = 0;
-			for(var x = 0; x<this.size; x++){
-				for(var y = 0; y<this.size; y++){
+			let count = 0;
+			for(let x = 0; x<this.size; x++){
+				for(let y = 0; y<this.size; y++){
 					if(this.cells[x][y].energized === true) {
-								var newR = this.cells[x][y].r + Math.round(rTintSlider.value*aTintSlider.value);
-								var newG = this.cells[x][y].g + Math.round(gTintSlider.value*aTintSlider.value);
-								var newB = this.cells[x][y].b + Math.round(bTintSlider.value*aTintSlider.value);
-								grid.geometries[count].material.color =  new THREE.Color('rgb(' + newR + ',' + newG + ',' + newB +')');
+								let newR = this.cells[x][y].r + Math.round(rTintSlider.value*aTintSlider.value);
+								let newG = this.cells[x][y].g + Math.round(gTintSlider.value*aTintSlider.value);
+								let newB = this.cells[x][y].b + Math.round(bTintSlider.value*aTintSlider.value);
+								grid.geometries[count].material.color.set('rgb(' + newR + ',' + newG + ',' + newB +')');
 					}
 					else{
-						grid.geometries[count].material.color =  new THREE.Color('rgb(' + this.cells[x][y].r + ',' + this.cells[x][y].g + ',' + this.cells[x][y].b +')');
+						grid.geometries[count].material.color.set('rgb(' + this.cells[x][y].r + ',' + this.cells[x][y].g + ',' + this.cells[x][y].b +')');
+					}
+
+					if(this.cells[x][y].isSpawner === true){
+						grid.geometries[count].scale.z = this.cells[x][y].a/.0326;
+					}
+					else{
+						grid.geometries[count].scale.z = (this.cells[x][y].r + this.cells[x][y].g + this.cells[x][y].b)/25;
 					}
 					grid.geometries[count].material.opacity =  this.cells[x][y].a;
 					count++;
@@ -690,45 +707,47 @@
 		}
 	};
 
-	var NUM_SAMPLES = 256;
+	let NUM_SAMPLES = 256;
 
-	var SOUND_1 = 'media/Koharu Biyori.mp3'; // by Toshio Masuda - Mushishi Zoku's OST
-	var SOUND_2 = 'media/Ghostly Orchestra PG-Mix.mp3'; // by Kuroneko Lounge - House set of Perfect Cherry Blossom
-	var SOUND_3 = 'media/Flawless Clothing of the Celestials.mp3'; // by Kitsune Workshop
-	var SOUND_4 = 'media/Just a Dream.mp3'; // by Approaching Nirvana - Cinematic Soundscapes Vol.2
-	var paused = false;
-	var canvas,ctx;
+	let SOUND_1 = 'media/Koharu Biyori.mp3'; // by Toshio Masuda - Mushishi Zoku's OST
+	let SOUND_2 = 'media/Ghostly Orchestra PG-Mix.mp3'; // by AgentJ Music
+	let SOUND_3 = 'media/Just a Dream.mp3'; // by Approaching Nirvana - Cinematic Soundscapes Vol.2
+	let SOUND_4 = 'media/Ghostly Orchestra PG-Mix.mp3'; // by Kuroneko Lounge - House set of Perfect Cherry Blossom
+	let SOUND_5 = 'media/Blossom.mp3'; // by Au5 - Monstercat 14 Discovery
+	let SOUND_6 = 'media/Full Force.mp3'; // by Rameses B - Monstercat 14 Discovery
+	let paused = false;
+	let canvas,ctx;
 
 	//Audio
-	var audioElement, analyserNode, drawFrequency = true;
+	let audioElement, analyserNode, drawFrequency = true;
 
 	//Sliders
-	var rSlider, gSlider, bSlider;
-	var rTintSlider, gTintSlider, bTintSlider, aTintSlider, thresholdSlider;
+	let rSlider, gSlider, bSlider;
+	let rTintSlider, gTintSlider, bTintSlider, aTintSlider, thresholdSlider;
 
 	//Tools
-	var changeColor = false;
-	var changePos = false;
-	var firstCellChosen = false;
-	var firstCellPos = {
+	let changeColor = false;
+	let changePos = false;
+	let firstCellChosen = false;
+	let firstCellPos = {
 		x: 0, 
 		y: 0
 	};
-	var getColor = false;
-	var tintColor;
+	let getColor = false;
+	let tintColor;
 
 	// Mouse location
-	var mouseDown = false;
-	var mouse = {};
+	let mouseDown = false;
+	let mouse = {};
 	mouse.x = 0;
 	mouse.y = 0;
 
-	var selectedCell = {
+	let selectedCell = {
 		x: -1,
 		y: -1
 	};
 
-	var frameCounter = 0;
+	let frameCounter = 0;
 
 	function init(){
 		// set up canvas stuff
@@ -756,7 +775,7 @@
 	
 	
 	function createWebAudioContextWithAnalyserNode(audioElement) {
-		var audioCtx, analyserNode, sourceNode;
+		let audioCtx, analyserNode, sourceNode;
 
 		// create new AudioContext
 		audioCtx = new (window.AudioContext || window.webkitAudioContext);
@@ -803,9 +822,7 @@
 			 		firstCellChosen = true;
 			 	}
 			 	else{
-			 		var secondCellInfo = grid.getCellData(selectedCell);
-			 		console.log(firstCellPos);
-			 		console.log(selectedCell);
+			 		let secondCellInfo = grid.getCellData(selectedCell);
 			 		grid.cells[selectedCell.x][selectedCell.y] = grid.getCellData(firstCellPos);
 			 		grid.cells[firstCellPos.x][firstCellPos.y] = secondCellInfo;
 			 		firstCellChosen = false;
@@ -888,8 +905,8 @@
 
 		// for displaying cell data
 		if(selectedCell.x != -1){
-			var cellData = grid.getCellData(selectedCell);
-			var cellDataString = "<p>R: " + cellData.r + "</p>"; 
+			let cellData = grid.getCellData(selectedCell);
+			let cellDataString = "<p>R: " + cellData.r + "</p>"; 
 			cellDataString += "<p>G: " + cellData.g + "</p>"; 
 			cellDataString += "<p>B: " + cellData.b + "</p>";
 
@@ -934,7 +951,7 @@
 		tintColor = makeColor(rTintSlider.value, gTintSlider.value, bTintSlider.value, aTintSlider.value);
 	
 		// create a new array of 8-bit integers (0-255)
-		var data = new Uint8Array(NUM_SAMPLES/2); 
+		let data = new Uint8Array(NUM_SAMPLES/2); 
 
 		// populate the array with the frequency data
 		if(drawFrequency && paused != true){
@@ -968,7 +985,7 @@
 	// Author: Tony Jefferson
 	// Last update: 3/1/2014
 	function getMouse(e){
-		var mouse = {};
+		let mouse = {};
 		mouse.x = e.pageX - e.target.offsetLeft;
 		mouse.y = e.pageY - e.target.offsetTop;
 		return mouse;
@@ -976,7 +993,7 @@
 
 	// Utilities
 	function makeColor(red, green, blue, alpha){
-			var color='rgba('+red+','+green+','+blue+', '+alpha+')';
+			let color='rgba('+red+','+green+','+blue+', '+alpha+')';
 			return color;
 	}
 	
